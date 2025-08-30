@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لعبة إكس-أو متعددة اللاعبين</title>
+    <title>لعبة إكس-أو متعددة اللاعبين - اتصال حقيقي</title>
     <style>
         * {
             margin: 0;
@@ -53,7 +53,7 @@
             border-radius: 12px;
             margin-bottom: 20px;
             width: 100%;
-            max-width: 400px;
+            max-width: 500px;
             text-align: center;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
@@ -101,11 +101,93 @@
             box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
         }
         
+        .btn-success {
+            background: linear-gradient(145deg, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.2));
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(145deg, rgba(34, 197, 94, 0.4), rgba(34, 197, 94, 0.3));
+            box-shadow: 0 4px 10px rgba(34, 197, 94, 0.2);
+        }
+        
+        .connection-panel {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.03));
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .connection-panel h3 {
+            margin-bottom: 15px;
+            color: #06b6d4;
+            text-align: center;
+        }
+        
+        .connection-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .form-group label {
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        
+        .form-group input, .form-group select {
+            padding: 10px 12px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .error-message {
+            color: #ef4444;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .server-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .server-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.03);
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .server-option:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .server-option input[type="radio"] {
+            margin: 0;
+        }
+        
         .game-area {
             display: flex;
             flex-direction: column;
             align-items: center;
-            display: none;
         }
         
         .players-info {
@@ -126,7 +208,7 @@
         
         .player.active {
             background: linear-gradient(145deg, rgba(6, 182, 212, 0.2), rgba(6, 182, 212, 0.1));
-            box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+            box-shadow: 极速 0 0 15px rgba(6, 182, 212, 0.3);
         }
         
         .player-x {
@@ -146,13 +228,13 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
-            box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6), 
+            box-shadow: 0 8px 极速30px rgba(2, 6, 23, 0.6), 
                         inset 0 1px 0 rgba(255, 255, 255, 0.05);
             position: relative;
         }
         
         .cell {
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 极速0.04);
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -198,7 +280,7 @@
             gap: 12px;
             justify-content: center;
             width: 100%;
-            max-width: 320px;
+            max-width: 320极速px;
         }
         
         .overlay {
@@ -216,13 +298,13 @@
             backdrop-filter: blur(4px);
         }
         
-        .overlay.show {
+极速        .overlay.show {
             opacity: 1;
             pointer-events: auto;
         }
         
         .message {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.03));
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba极速(255, 255, 255, 0.03));
             padding: 24px;
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
@@ -259,6 +341,11 @@
             background: #22c55e;
         }
         
+        .status-dot.connecting {
+            background: #f59e0b;
+            animation: pulse 1s infinite;
+        }
+        
         .invite-section {
             margin-top: 15px;
             display: flex;
@@ -288,6 +375,16 @@
             box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
         }
         
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
         @keyframes glow {
             from {
                 text-shadow: 0 0 10px rgba(6, 182, 212, 0.7);
@@ -306,6 +403,15 @@
                 transform: scale(1.05);
                 box-shadow: 0 0 20px rgba(6, 182, 212, 0.6);
             }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         
         @media (max-width: 768px) {
@@ -356,15 +462,56 @@
             </div>
         </div>
 
-        <div class="game-area" id="gameArea">
+        <div class="connection-panel" id="connectionPanel" style="display: none;">
+            <h3>الاتصال باللعبة</h3>
+            <div class="connection-form">
+                <div class="form-group">
+                    <label for="playerName">اسم اللاعب:</label>
+                    <input type="text" id="playerName" placeholder="أدخل اسمك" value="لاعب">
+                    <div class="error-message" id="nameError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>اختر خادم WebSocket:</label>
+                    <div class="server-options">
+                        <div class="server-option">
+                            <input type="radio" id="server1" name="server" value="wss://socketsbay.com/wss/v2/1/demo/" checked>
+                            <label for="server1">خادم تجريبي 1 (socketsbay.com)</label>
+                        </div>
+                        <div class="server-option">
+                            <input type="radio" id="server2" name="server" value="wss://echo.websocket.org">
+                            <label for="server2">خادم تجريبي 2 (websocket.org)</label>
+                        </div>
+                        <div class="server-option">
+                            <input type="radio" id="serverCustom" name="server" value="custom">
+                            <label for="serverCustom">خادم مخصص</label>
+                        </div>
+                    </div>
+                    <input type="text" id="customServer" placeholder="أدخل رابط الخادم المخصص" style="display: none; margin-top: 10px;">
+                    <div class="error-message" id="serverError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="roomId">معرف الغرفة:</label>
+                    <input type="text" id="roomId" placeholder="أدخل معرف الغرفة">
+                    <div class="error-message" id="roomError"></div>
+                </div>
+                
+                <button class="btn btn-success" id="connectBtn">اتصال</button>
+                <button class="btn btn-primary" id="createRoomBtn">إنشاء غرفة جديدة</button>
+                <button class="btn" id="simulateBtn">محاكاة اتصال (بدون WebSocket)</button>
+            </div>
+        </div>
+
+        <div class="game-area" id="gameArea" style="display: none;">
             <div class="players-info">
                 <div class="player player-x active" id="playerX">
                     <div>اللاعب X</div>
-                    <div>أنت</div>
+                    <div id="playerXName">أنت</div>
                 </div>
                 <div class="player player-o" id="playerO">
                     <div>اللاعب O</div>
-                    <div>في انتظار الخصم</div>
+                    <div id="playerOName">في انتظار الخصم</div>
                 </div>
             </div>
             
@@ -376,7 +523,7 @@
                 <div class="cell" data-index="4"></div>
                 <div class="cell" data-index="5"></div>
                 <div class="cell" data-index="6"></div>
-                <div class="cell" data-index="7"></div>
+                <div class="极速cell" data-index="7"></div>
                 <div class="cell" data-index="8"></div>
 
                 <div class="overlay" id="overlay">
@@ -388,7 +535,8 @@
             </div>
 
             <div class="controls">
-                <button class="btn" id="newGameBtn">لعبة جديدة</button>
+                <button class="btn"极速 id="newGameBtn">لعبة جديدة</button>
+                <button class="btn" id="disconnectBtn">قطع الاتصال</button>
             </div>
             
             <div class="connection-status" id="connectionStatus">
@@ -409,9 +557,21 @@
     <script>
         // عناصر DOM
         const gameSetup = document.getElementById('gameSetup');
+        const connectionPanel = document.getElementById('connectionPanel');
         const gameArea = document.getElementById('gameArea');
         const localBtn = document.getElementById('localBtn');
         const onlineBtn = document.getElementById('onlineBtn');
+        const connectBtn = document.getElementById('connectBtn');
+        const createRoomBtn = document.getElementById('createRoomBtn');
+        const simulateBtn = document.getElementById('simulateBtn');
+        const playerNameInput = document.getElementById('playerName');
+        const roomIdInput = document.getElementById('roomId');
+        const customServerInput = document.getElementById('customServer');
+        const nameError = document.getElementById('nameError');
+        const serverError = document.getElementById('serverError');
+        const roomError = document.getElementById('roomError');
+        const playerXName = document.getElementById('playerXName');
+        const playerOName = document.getElementById('playerOName');
         const board = document.getElementById('board');
         const cells = Array.from(document.querySelectorAll('.cell'));
         const playerX = document.getElementById('playerX');
@@ -420,22 +580,28 @@
         const messageText = document.getElementById('messageText');
         const resetBtn = document.getElementById('resetBtn');
         const newGameBtn = document.getElementById('newGameBtn');
+        const disconnectBtn = document.getElementById('disconnectBtn');
         const connectionStatus = document.getElementById('connectionStatus');
         const statusDot = document.getElementById('statusDot');
         const statusText = document.getElementById('statusText');
         const inviteSection = document.getElementById('inviteSection');
         const inviteInput = document.getElementById('inviteInput');
         const copyBtn = document.getElementById('copyBtn');
+        const serverOptions = document.querySelectorAll('input[name="server"]');
 
         // حالة اللعبة
         let boardState = Array(9).fill(null);
         let currentPlayer = 'X';
-        let gameMode = 'local'; // 'local' أو 'online'
+        let gameMode = 'local';
         let gameActive = true;
-        let playerRole = 'X'; // دور اللاعب في اللعبة عبر الإنترنت
+        let playerRole = 'X';
         let roomId = null;
         let socket = null;
         let isConnected = false;
+        let reconnectAttempts = 0;
+        const maxReconnectAttempts = 5;
+        let playerName = "لاعب";
+        let useSimulation = false;
 
         const wins = [
             [0,1,2],[3,4,5],[6,7,8],
@@ -447,66 +613,332 @@
         function init() {
             // إضافة مستمعي الأحداث
             localBtn.addEventListener('click', () => startGame('local'));
-            onlineBtn.addEventListener('click', () => startGame('online'));
+            onlineBtn.addEventListener('click', showConnectionPanel);
+            connectBtn.addEventListener('click', connectToRoom);
+            createRoomBtn.addEventListener('click', createNewRoom);
+            simulateBtn.addEventListener('click', simulateConnection);
             resetBtn.addEventListener('click', resetGame);
             newGameBtn.addEventListener('click', resetGame);
+            disconnectBtn.addEventListener('click', disconnect);
             copyBtn.addEventListener('click', copyInviteLink);
+            
+            // مستمعي أحداث الخيارات
+            serverOptions.forEach(option => {
+                option.addEventListener('change', handleServerChange);
+            });
             
             // مستمعي أحداث الخلايا
             cells.forEach((cell, index) => {
                 cell.addEventListener('click', () => handleCellClick(index));
             });
+
+            // محاولة الاتصال التلقائي إذا كان هناك معرف غرفة في URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const roomParam = urlParams.get('room');
+            if (roomParam) {
+                roomIdInput.value = roomParam;
+                showConnectionPanel();
+            }
         }
 
-        // بدء اللعبة
-        function startGame(mode) {
-            gameMode = mode;
-            gameSetup.style.display = 'none';
-            gameArea.style.display = 'flex';
-            
-            if (mode === 'online') {
-                initOnlineGame();
+        // التعامل مع تغيير خيارات الخادم
+        function handleServerChange() {
+            const selectedOption = document.querySelector('input[name="server"]:checked');
+            if (selectedOption.value === 'custom') {
+                customServerInput.style.display = 'block';
             } else {
-                statusText.textContent = "لعبة محلية";
-                statusDot.classList.add('connected');
-                inviteSection.style.display = 'none';
+                customServerInput.style.display = 'none';
+            }
+        }
+
+        // عرض لوحة الاتصال
+        function showConnectionPanel() {
+            gameSetup.style.display = 'none';
+            connectionPanel.style.display = 'block';
+        }
+
+        // التحقق من صحة المدخلات
+        function validateInputs() {
+            let isValid = true;
+            
+            // التحقق من اسم اللاعب
+            playerName = playerNameInput.value.trim();
+            if (!playerName) {
+                showError(nameError, 'يرجى إدخال اسم اللاعب');
+                isValid = false;
+            } else {
+                hideError(nameError);
             }
             
-            resetGame();
+            // التحقق من معرف الغرفة
+            roomId = roomIdInput.value.trim();
+            if (!roomId) {
+                showError(roomError, 'يرجى إدخال معرف الغرفة');
+                isValid = false;
+            } else {
+                hideError(roomError);
+            }
+            
+            return isValid;
         }
 
-        // تهيئة اللعبة عبر الإنترنت
-        function initOnlineGame() {
-            statusText.textContent = "جاري الاتصال...";
-            
-            // إنشاء معرف غرفة عشوائي
+        // عرض رسالة خطأ
+        function showError(element, message) {
+            element.text极速Content = message;
+            element.style.display = 'block';
+        }
+
+        // إخفاء رسالة خطأ
+        function hideError(element) {
+            element.style.display = 'none';
+        }
+
+        // إنشاء غرفة جديدة
+        function createNewRoom() {
             roomId = generateRoomId();
-            inviteInput.value = `${window.location.href}?room=${roomId}`;
+            roomIdInput.value = roomId;
             
-            // محاكاة الاتصال (في تطبيق حقيقي، سيتم استخدام WebSockets)
+            if (validateInputs()) {
+                connectToRoom();
+            }
+        }
+
+        // محاكاة الاتصال (بدون WebSocket حقيقي)
+        function simulateConnection() {
+            if (!validateInputs()) {
+                return;
+            }
+            
+            useSimulation = true;
+            roomId = roomIdInput.value;
+            
+            // تغيير نص زر الاتصال لإظهار التحميل
+            simulateBtn.innerHTML = '<span class="loading"></span> جاري المحاكاة...';
+            simulateBtn.disabled = true;
+            
+            // محاكاة الاتصال
             setTimeout(() => {
                 isConnected = true;
-                statusText.textContent = "متصل - في انتظار الخصم";
-                statusDot.classList.add('connected');
+                roomId = roomIdInput.value;
+                reconnectAttempts = 0;
+                statusText.textContent = "متصل (محاكاة) - في انتظار الخصم";
+                statusDot.className = "status-dot connected";
                 
-                // محاكاة انضمام لاعب آخر بعد 3 ثوان
-                setTimeout(() => {
-                    statusText.textContent = "متصل - الخصم متصل";
-                    playerO.querySelector('div:last-child').textContent = "الخصم";
-                    if (playerRole === 'X') {
-                        playerX.classList.add('active');
-                        playerO.classList.remove('active');
-                    } else {
-                        playerX.classList.remove('active');
-                        playerO.classList.add('active');
-                    }
-                }, 3000);
+                // إعادة تعيين زر المحاكاة
+                simulateBtn.innerHTML = 'محاكاة اتصال (بدون WebSocket)';
+                simulateBtn.disabled = false;
+                
+                // الانتقال إلى منطقة اللعبة
+                connectionPanel.style.display = 'none';
+                gameArea.style.display = 'flex';
+                
+                // تحديث اسم اللاعب
+                playerXName.textContent = playerName;
+                
+                // إنشاء رابط الدعوة
+                inviteInput.value = `${window.location.origin}${window.location.pathname}?room=${roomId}`;
+                
+                showMessage("تم إنشاء اتصال محاكاة. شارك الرابط مع صديقك!");
             }, 1500);
+        }
+
+        // الاتصال بغرفة
+        function connectToRoom() {
+            if (!validateInputs()) {
+                return;
+            }
+            
+            useSimulation = false;
+            const selectedOption = document.querySelector('input[name="server"]:checked');
+            let serverUrl = selectedOption.value;
+            
+            if (serverUrl === 'custom') {
+                serverUrl = customServerInput.value.trim();
+                if (!serverUrl) {
+                    showError(serverError, 'يرجى إدخال رابط الخادم');
+                    return;
+                }
+            }
+            
+            // التحقق من رابط الخادم
+            if (!serverUrl.startsWith('ws://') && !serverUrl.startsWith('wss://')) {
+                showError(serverError, 'رابط الخادم يجب أن يبدأ بـ ws:// أو wss://');
+                return;
+            }
+            
+            // تغيير نص زر الاتصال لإظهار التحميل
+            connectBtn.innerHTML = '<span class="loading"></span> جاري الاتصال...';
+            connectBtn.disabled = true;
+            
+            // الاتصال بخادم WebSocket
+            connectWebSocket(serverUrl, roomId);
+        }
+
+        // الاتصال بخادم WebSocket
+        function connectWebSocket(serverUrl, room) {
+            statusText.textContent = "جاري الاتصال بالخادم...";
+            statusDot.className = "status-dot connecting";
+            
+            try {
+                socket = new WebSocket(serverUrl);
+                
+                socket.onopen = function() {
+                    isConnected = true;
+                    roomId = room;
+                    reconnectAttempts = 0;
+                    statusText.textContent = "متصل - في انتظار الخصم";
+                    statusDot.className = "status-dot connected";
+                    
+                    // إعادة تعيين زر الاتصال
+                    connectBtn.innerHTML = 'اتصال';
+                    connectBtn.disabled = false;
+                    
+                    // الانتقال إلى منطقة اللعبة
+                    connectionPanel.style.display = 'none';
+                    gameArea.style.display = 'flex';
+                    
+                    // تحديث اسم اللاعب
+                    playerXName.textContent = playerName;
+                    
+                    // إنشاء رابط الدعوة
+                    inviteInput.value = `${window.location.origin}${window.location.pathname}?room=${roomId}`;
+                    
+                    // إرسال رسالة انضمام إلى الغرفة
+                    sendWebSocketMessage({
+                        type: 'join',
+                        room: roomId,
+                        player: playerRole,
+                        playerName: playerName
+                    });
+                };
+                
+                socket.onmessage = function(event) {
+                    try {
+                        const message = JSON.parse(event.data);
+                        handleWebSocketMessage(message);
+                    } catch (error) {
+                        console.error('خطأ في معالجة الرسالة:', error);
+                        showMessage("خطأ في استقبال البيانات من الخادم");
+                    }
+                };
+                
+                socket.onclose = function(event) {
+                    isConnected = false;
+                    statusText.textContent = "تم قطع الاتصال";
+                    statusDot.className = "status-dot";
+                    
+                    // إعادة تعيين زر الاتصال
+                    connectBtn.innerHTML = 'اتصال';
+                    connectBtn.disabled = false;
+                    
+                    // محاولة إعادة الاتصال فقط إذا لم يكن الإغلاق متعمداً
+                    if (event.code !== 1000 && reconnectAttempts < maxReconnectAttempts) {
+                        reconnectAttempts++;
+                        setTimeout(() => {
+                            statusText.textContent = `إعادة الاتصال... (${reconnectAttempts}/${maxReconnectAttempts})`;
+                            connectWebSocket(serverUrl, roomId);
+                        }, 2000);
+                    }
+                };
+                
+                socket.onerror = function(error) {
+                    console.error('خطأ في WebSocket:', error);
+                    statusText.textContent = "خطأ في الاتصال";
+                    statusDot.className = "status-dot";
+                    
+                    // إعادة تعيين زر الاتصال
+                    connectBtn.innerHTML = 'اتصال';
+                    connectBtn.disabled = false;
+                    
+                    showMessage("حدث خطأ في الاتصال بالخادم. يرجى المحاولة مرة أخرى أو استخدام خيار المحاكاة.");
+                };
+                
+            } catch (error) {
+                console.error('خطأ في إنشاء اتصال WebSocket:', error);
+                statusText.textContent = "خطأ في الاتصال";
+                statusDot.className = "status-dot";
+                
+                // إعادة تعيين زر الاتصال
+                connectBtn.innerHTML = 'اتصال';
+                connectBtn.disabled = false;
+                
+                showMessage("خطأ في الاتصال بالخادم. يرجى التحقق من الرابط والمحاولة مرة أخرى.");
+            }
+        }
+
+        // إرسال رسالة عبر WebSocket
+        function sendWebSocketMessage(message) {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify(message));
+            }
+        }
+
+        // معالجة الرسائل الواردة عبر WebSocket
+        function handleWebSocketMessage(message) {
+            console.log('رسالة مستلمة:', message);
+            
+            switch (message.type) {
+                case 'join':
+                    handlePlayerJoin(message);
+                    break;
+                case 'move':
+                    handleRemoteMove(message);
+                    break;
+                case 'game_reset':
+                    handleGameReset();
+                    break;
+                case 'game_end':
+                    handleRemoteGameEnd(message);
+                    break;
+                case 'error':
+                    handleErrorMessage(message);
+                    break;
+                case 'chat':
+                    handleChatMessage(message);
+                    break;
+            }
+        }
+
+        // التعامل مع انضمام لاعب جديد
+        function handlePlayerJoin(message) {
+            if (message.player !== playerRole) {
+                statusText.textContent = "متصل - الخصم متصل";
+                playerOName.textContent = message.playerName || "الخصم";
+                
+                if (playerRole === 'X') {
+                    playerX.classList.add('active');
+                    playerO.classList.remove('active');
+                } else {
+                    playerX.classList.remove('active');
+                    playerO.classList.add('active');
+                }
+                
+                showMessage(`انضم ${message.playerName} إلى الغرفة!`);
+            }
+        }
+
+        // التعامل مع رسائل الخطأ
+        function handleErrorMessage(message) {
+            showMessage(`خطأ: ${message.message}`);
         }
 
         // إنشاء معرف غرفة عشوائي
         function generateRoomId() {
             return Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+
+        // قطع الاتصال
+        function disconnect() {
+            if (socket) {
+                socket.close(1000, "تم قطع الاتصال بواسطة المستخدم");
+            }
+            isConnected = false;
+            statusText.textContent = "غير متصل";
+            statusDot.className = "status-dot";
+            
+            // العودة إلى شاشة البداية
+            gameArea.style.display = 'none';
+            gameSetup.style.display = 'block';
         }
 
         // نسخ رابط الدعوة
@@ -519,7 +951,26 @@
             }, 2000);
         }
 
-        // التعامل với النقر على خلية
+        // بدء اللعبة
+        function startGame(mode) {
+            gameMode = mode;
+            gameSetup.style.display = 'none';
+            gameArea.style.display = 'flex';
+            
+            if (mode === 'online') {
+                showConnectionPanel();
+            } else {
+                statusText.textContent = "لعبة محلية";
+                statusDot.className = "status-dot connected";
+                inviteSection.style.display = 'none';
+                playerXName.textContent = playerNameInput.value || "لاعب 1";
+                playerOName.textContent = "لاعب 2";
+            }
+            
+            resetGame();
+        }
+
+        // التعامل مع النقر على خلية
         function handleCellClick(index) {
             if (!gameActive || boardState[index] !== null) return;
             
@@ -528,11 +979,47 @@
                 (playerRole === 'X' && currentPlayer !== 'X') ||
                 (playerRole === 'O' && currentPlayer !== 'O')
             )) {
+                showMessage("ليس دورك للعب الآن!");
                 return;
             }
             
             // تحديث حالة اللوحة
             boardState[index] = currentPlayer;
+            updateBoard();
+            
+            // إرسال الحركة إلى الخصم (في حالة اللعب عبر الإنترنت)
+            if (gameMode === 'online' && isConnected && !useSimulation) {
+                sendWebSocketMessage({
+                    type: 'move',
+                    index: index,
+                    player: currentPlayer,
+                    room: roomId
+                });
+            }
+            
+            // التحقق من وجود فائز
+            const result = checkWinner();
+            if (result) {
+                handleGame极速End(result);
+                return;
+            }
+            
+            // التحقق من التعادل
+            if (boardState.every(cell => cell !== null)) {
+                handleGameEnd({ winner: null });
+                return;
+            }
+            
+            // تبديل اللاعب
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            updatePlayerTurn();
+        }
+
+        // التعامل مع حركة الخصم
+        function handleRemoteMove(message) {
+            if (message.player === playerRole) return; // تجاهل الحركات الخاصة باللاعب الحالي
+            
+            boardState[message.index] = message.player;
             updateBoard();
             
             // التحقق من وجود فائز
@@ -551,50 +1038,26 @@
             // تبديل اللاعب
             currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
             updatePlayerTurn();
-            
-            // في اللعبة عبر الإنترنت، إرسال الحركة إلى الخصم
-            if (gameMode === 'online') {
-                // محاكاة إرسال الحركة (في تطبيق حقيقي، سيتم استخدام WebSockets)
-                setTimeout(() => {
-                    // محاكاة استجابة الخصم بعد تأخير
-                    if (gameActive) {
-                        makeAIMove();
-                    }
-                }, 1000);
+        }
+
+        // التعامل مع إعادة تعيين اللعبة من الخصم
+        function handleGameReset() {
+            resetGame();
+            showMessage("الخصم أعاد اللعبة!");
+        }
+
+        // التعامل مع نهاية اللعبة من الخصم
+        function handleRemoteGameEnd(message) {
+            const result = checkWinner();
+            if (result) {
+                handleGameEnd(result);
             }
         }
 
-        // جعل الذكاء الاصطناعي يلعب حركة (لمحاكاة الخصم عبر الإنترنت)
-        function makeAIMove() {
-            if (!gameActive) return;
-            
-            // البحث عن خلية فارغة عشوائية
-            const emptyCells = boardState
-                .map((cell, index) => cell === null ? index : null)
-                .filter(index => index !== null);
-            
-            if (emptyCells.length > 0) {
-                const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-                boardState[randomIndex] = currentPlayer;
-                updateBoard();
-                
-                // التحقق من وجود فائز
-                const result = checkWinner();
-                if (result) {
-                    handleGameEnd(result);
-                    return;
-                }
-                
-                // التحقق من التعادل
-                if (boardState.every(cell => cell !== null)) {
-                    handleGameEnd({ winner: null });
-                    return;
-                }
-                
-                // تبديل اللاعب
-                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-                updatePlayerTurn();
-            }
+        // التعامل مع رسائل الدردشة
+        function handleChatMessage(message) {
+            // يمكن إضافة نظام دردشة هنا
+            console.log('رسالة دردشة:', message.text);
         }
 
         // التحقق من وجود فائز
@@ -619,6 +1082,15 @@
             }
             
             overlay.classList.add('show');
+            
+            // إرسال نتيجة اللعبة إلى الخصم
+            if (gameMode === 'online' && isConnected && !useSimulation) {
+                sendWebSocketMessage({
+                    type: 'game_end',
+                    winner: result.winner,
+                    room: roomId
+                });
+            }
         }
 
         // تمييز الخلايا الفائزة
@@ -626,6 +1098,16 @@
             line.forEach(index => {
                 cells[index].classList.add('win');
             });
+        }
+
+        // عرض رسالة
+        function showMessage(msg) {
+            messageText.textContent = msg;
+            overlay.classList.add('show');
+            
+            setTimeout(() => {
+                overlay.classList.remove('show');
+            }, 3000);
         }
 
         // تحديث اللوحة
@@ -672,12 +1154,20 @@
             // في اللعبة عبر الإنترنت، تأكد من أن اللاعب X يبدأ دائمًا
             if (gameMode === 'online') {
                 playerRole = 'X';
-                playerX.querySelector('div:last-child').textContent = "أنت";
-                playerO.querySelector('div:last-child').textContent = "الخصم";
+                playerXName.textContent = playerName;
+                playerOName.textContent = "في انتظار الخصم";
                 
                 if (playerRole === 'X') {
                     playerX.classList.add('active');
                     playerO.classList.remove('active');
+                }
+                
+                // إرسال طلب إعادة تعيين إلى الخصم
+                if (isConnected && !useSimulation) {
+                    sendWebSocketMessage({
+                        type: 'game_reset',
+                        room: roomId
+                    });
                 }
             }
         }
