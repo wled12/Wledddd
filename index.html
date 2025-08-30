@@ -1,1179 +1,500 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لعبة إكس-أو متعددة اللاعبين - اتصال حقيقي</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-            color: #fff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        h1 {
-            font-size: 2.2rem;
-            margin-bottom: 8px;
-            text-shadow: 0 0 10px rgba(6, 182, 212, 0.7);
-            animation: glow 2s infinite alternate;
-        }
-        
-        .subtitle {
-            color: #94a3b8;
-            margin-bottom: 20px;
-        }
-        
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            max-width: 1000px;
-            width: 100%;
-        }
-        
-        .game-setup {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.03));
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-        }
-        
-        .game-setup h2 {
-            margin-bottom: 15px;
-            color: #06b6d4;
-        }
-        
-        .setup-options {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .btn {
-            padding: 12px 20px;
-            border-radius: 8px;
-            background: linear-gradient(145deg, rgba(6, 182, 212, 0.3), rgba(6, 182, 212, 0.2));
-            border: 1px solid rgba(6, 182, 212, 0.3);
-            color: inherit;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 500;
-            font-size: 16px;
-        }
-        
-        .btn:hover {
-            background: linear-gradient(145deg, rgba(6, 182, 212, 0.4), rgba(6, 182, 212, 0.3));
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(6, 182, 212, 0.2);
-        }
-        
-        .btn:active {
-            transform: translateY(0);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(145deg, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.2));
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-        
-        .btn-primary:hover {
-            background: linear-gradient(145deg, rgba(239, 68, 68, 0.4), rgba(239, 68, 68, 0.3));
-            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
-        }
-        
-        .btn-success {
-            background: linear-gradient(145deg, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.2));
-            border: 1px solid rgba(34, 197, 94, 0.3);
-        }
-        
-        .btn-success:hover {
-            background: linear-gradient(145deg, rgba(34, 197, 94, 0.4), rgba(34, 197, 94, 0.3));
-            box-shadow: 0 4px 10px rgba(34, 197, 94, 0.2);
-        }
-        
-        .connection-panel {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.03));
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 500px;
-        }
-        
-        .connection-panel h3 {
-            margin-bottom: 15px;
-            color: #06b6d4;
-            text-align: center;
-        }
-        
-        .connection-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        
-        .form-group label {
-            font-size: 14px;
-            color: #94a3b8;
-        }
-        
-        .form-group input, .form-group select {
-            padding: 10px 12px;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-        
-        .error-message {
-            color: #ef4444;
-            font-size: 14px;
-            margin-top: 5px;
-            display: none;
-        }
-        
-        .server-options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .server-option {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.03);
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-        
-        .server-option:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-        
-        .server-option input[type="radio"] {
-            margin: 0;
-        }
-        
-        .game-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .players-info {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 320px;
-            margin-bottom: 15px;
-        }
-        
-        .player {
-            padding: 10px 15px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.05);
-            text-align: center;
-            min-width: 120px;
-        }
-        
-        .player.active {
-            background: linear-gradient(145deg, rgba(6, 182, 212, 0.2), rgba(6, 182, 212, 0.1));
-            box-shadow: 极速 0 0 15px rgba(6, 182, 212, 0.3);
-        }
-        
-        .player-x {
-            color: #ef4444;
-        }
-        
-        .player-o {
-            color: #60a5fa;
-        }
-        
-        .board {
-            width: 320px;
-            height: 320px;
-            background: linear-gradient(145deg, #07102a, #0a1125);
-            border-radius: 14px;
-            padding: 12px;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            box-shadow: 0 8px 极速30px rgba(2, 6, 23, 0.6), 
-                        inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            position: relative;
-        }
-        
-        .cell {
-            background: rgba(255, 255, 255, 极速0.04);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.2s ease;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        
-        .cell:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-2px);
-        }
-        
-        .cell:active {
-            transform: scale(0.98);
-        }
-        
-        .cell.x {
-            color: #ef4444;
-            text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-        }
-        
-        .cell.o {
-            color: #60a5fa;
-            text-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
-        }
-        
-        .cell.disabled {
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-        
-        .cell.win {
-            animation: win-pulse 1s infinite alternate;
-        }
-        
-        .controls {
-            margin-top: 20px;
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            width: 100%;
-            max-width: 320极速px;
-        }
-        
-        .overlay {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(145deg, rgba(2, 6, 23, 0.8), rgba(2, 6, 23, 0.7));
-            border-radius: 14px;
-            z-index: 10;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            backdrop-filter: blur(4px);
-        }
-        
-极速        .overlay.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        
-        .message {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba极速(255, 255, 255, 0.03));
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
-            min-width: 240px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        .message p {
-            margin: 0 0 16px 0;
-            font-size: 18px;
-            font-weight: 500;
-        }
-        
-        .connection-status {
-            margin-top: 15px;
-            padding: 8px 12px;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-        }
-        
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #ef4444;
-        }
-        
-        .status-dot.connected {
-            background: #22c55e;
-        }
-        
-        .status-dot.connecting {
-            background: #f59e0b;
-            animation: pulse 1s infinite;
-        }
-        
-        .invite-section {
-            margin-top: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .invite-link {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .invite-link input {
-            flex: 1;
-            padding: 8px 12px;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-        
-        .win-line {
-            position: absolute;
-            background: rgba(6, 182, 212, 0.8);
-            z-index: 5;
-            transform-origin: center left;
-            box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
-        }
-        
-        .loading {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes glow {
-            from {
-                text-shadow: 0 0 10px rgba(6, 182, 212, 0.7);
-            }
-            to {
-                text-shadow: 0 0 20px rgba(6, 182, 212, 1), 0 0 30px rgba(6, 182, 212, 0.5);
-            }
-        }
-        
-        @keyframes win-pulse {
-            from {
-                transform: scale(1);
-                box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
-            }
-            to {
-                transform: scale(1.05);
-                box-shadow: 0 0 20px rgba(6, 182, 212, 0.6);
-            }
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .board {
-                width: 280px;
-                height: 280px;
-            }
-            
-            .cell {
-                font-size: 40px;
-            }
-            
-            .players-info {
-                flex-direction: column;
-                gap: 10px;
-                align-items: center;
-            }
-        }
-        
-        @media (max-width: 420px) {
-            .board {
-                width: 90vw;
-                height: 90vw;
-            }
-            
-            .cell {
-                font-size: 10vw;
-            }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>لعبة إكس-أو مع مقدمة فيديو</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+      text-shadow: 0 0 10px rgba(6, 182, 212, 0.7);
+      animation: glow 2s infinite alternate;
+    }
+    
+    .subtitle {
+      color: #94a3b8;
+      margin-bottom: 20px;
+    }
+    
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 1000px;
+      width: 100%;
+    }
+    
+    .video-container {
+      width: 90%;
+      max-width: 560px;
+      margin-bottom: 30px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    
+    .game-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .board {
+      width: 320px;
+      height: 320px;
+      background: linear-gradient(145deg, #07102a, #0a1125);
+      border-radius: 14px;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6), 
+                  inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      position: relative;
+    }
+    
+    .cell {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    .cell:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-2px);
+    }
+    
+    .cell:active {
+      transform: scale(0.98);
+    }
+    
+    .cell.x {
+      color: #ef4444;
+      text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+    }
+    
+    .cell.o {
+      color: #60a5fa;
+      text-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+    }
+    
+    .cell.disabled {
+      cursor: not-allowed;
+      opacity: 0.85;
+    }
+    
+    .cell.win {
+      animation: win-pulse 1s infinite alternate;
+    }
+    
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 320px;
+    }
+    
+    .status {
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 8px 16px;
+      border-radius: 8px;
+    }
+    
+    .status strong {
+      color: #06b6d4;
+    }
+    
+    .btn {
+      padding: 10px 16px;
+      border-radius: 8px;
+      background: linear-gradient(145deg, rgba(6, 182, 212, 0.2), rgba(6, 182, 212, 0.1));
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      color: inherit;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+    
+    .btn:hover {
+      background: linear-gradient(145deg, rgba(6, 182, 212, 0.3), rgba(6, 182, 212, 0.2));
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(6, 182, 212, 0.2);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(145deg, rgba(2, 6, 23, 0.8), rgba(2, 6, 23, 0.7));
+      border-radius: 14px;
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      backdrop-filter: blur(4px);
+    }
+    
+    .overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    .message {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.03));
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
+      min-width: 240px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .message p {
+      margin: 0 0 16px 0;
+      font-size: 18px;
+      font-weight: 500;
+    }
+    
+    .message .again {
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      background: linear-gradient(145deg, rgba(6, 182, 212, 0.3), rgba(6, 182, 212, 0.2));
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      transition: all 0.2s ease;
+    }
+    
+    .message .again:hover {
+      background: linear-gradient(145deg, rgba(6, 182, 212, 0.4), rgba(6, 182, 212, 0.3));
+      transform: translateY(-2px);
+    }
+    
+    .win-line {
+      position: absolute;
+      background: rgba(6, 182, 212, 0.8);
+      z-index: 5;
+      transform-origin: center left;
+      box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+    }
+    
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 10px rgba(6, 182, 212, 0.7);
+      }
+      to {
+        text-shadow: 0 0 20px rgba(6, 182, 212, 1), 0 0 30px rgba(6, 182, 212, 0.5);
+      }
+    }
+    
+    @keyframes win-pulse {
+      from {
+        transform: scale(1);
+        box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
+      }
+      to {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(6, 182, 212, 0.6);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .board {
+        width: 280px;
+        height: 280px;
+      }
+      
+      .cell {
+        font-size: 40px;
+      }
+      
+      .controls {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+    
+    @media (max-width: 420px) {
+      .board {
+        width: 90vw;
+        height: 90vw;
+      }
+      
+      .cell {
+        font-size: 10vw;
+      }
+      
+      .video-container {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>لعبة إكس-أو متعددة اللاعبين</h1>
-            <p class="subtitle">ادعُ صديقك للعب معك عبر الإنترنت!</p>
-        </div>
-
-        <div class="game-setup" id="gameSetup">
-            <h2>اختر طريقة اللعب</h2>
-            <div class="setup-options">
-                <button class="btn" id="localBtn">لاعبين على نفس الجهاز</button>
-                <button class="btn btn-primary" id="onlineBtn">لعبة عبر الإنترنت</button>
-            </div>
-        </div>
-
-        <div class="connection-panel" id="connectionPanel" style="display: none;">
-            <h3>الاتصال باللعبة</h3>
-            <div class="connection-form">
-                <div class="form-group">
-                    <label for="playerName">اسم اللاعب:</label>
-                    <input type="text" id="playerName" placeholder="أدخل اسمك" value="لاعب">
-                    <div class="error-message" id="nameError"></div>
-                </div>
-                
-                <div class="form-group">
-                    <label>اختر خادم WebSocket:</label>
-                    <div class="server-options">
-                        <div class="server-option">
-                            <input type="radio" id="server1" name="server" value="wss://socketsbay.com/wss/v2/1/demo/" checked>
-                            <label for="server1">خادم تجريبي 1 (socketsbay.com)</label>
-                        </div>
-                        <div class="server-option">
-                            <input type="radio" id="server2" name="server" value="wss://echo.websocket.org">
-                            <label for="server2">خادم تجريبي 2 (websocket.org)</label>
-                        </div>
-                        <div class="server-option">
-                            <input type="radio" id="serverCustom" name="server" value="custom">
-                            <label for="serverCustom">خادم مخصص</label>
-                        </div>
-                    </div>
-                    <input type="text" id="customServer" placeholder="أدخل رابط الخادم المخصص" style="display: none; margin-top: 10px;">
-                    <div class="error-message" id="serverError"></div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="roomId">معرف الغرفة:</label>
-                    <input type="text" id="roomId" placeholder="أدخل معرف الغرفة">
-                    <div class="error-message" id="roomError"></div>
-                </div>
-                
-                <button class="btn btn-success" id="connectBtn">اتصال</button>
-                <button class="btn btn-primary" id="createRoomBtn">إنشاء غرفة جديدة</button>
-                <button class="btn" id="simulateBtn">محاكاة اتصال (بدون WebSocket)</button>
-            </div>
-        </div>
-
-        <div class="game-area" id="gameArea" style="display: none;">
-            <div class="players-info">
-                <div class="player player-x active" id="playerX">
-                    <div>اللاعب X</div>
-                    <div id="playerXName">أنت</div>
-                </div>
-                <div class="player player-o" id="playerO">
-                    <div>اللاعب O</div>
-                    <div id="playerOName">في انتظار الخصم</div>
-                </div>
-            </div>
-            
-            <div class="board" id="board">
-                <div class="cell" data-index="0"></div>
-                <div class="cell" data-index="1"></div>
-                <div class="cell" data-index="2"></div>
-                <div class="cell" data-index="3"></div>
-                <div class="cell" data-index="4"></div>
-                <div class="cell" data-index="5"></div>
-                <div class="cell" data-index="6"></div>
-                <div class="极速cell" data-index="7"></div>
-                <div class="cell" data-index="8"></div>
-
-                <div class="overlay" id="overlay">
-                    <div class="message" id="message">
-                        <p id="messageText">من فضلك العب...</p>
-                        <button class="btn" id="resetBtn">لعب مرة أخرى</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="controls">
-                <button class="btn"极速 id="newGameBtn">لعبة جديدة</button>
-                <button class="btn" id="disconnectBtn">قطع الاتصال</button>
-            </div>
-            
-            <div class="connection-status" id="connectionStatus">
-                <div class="status-dot" id="statusDot"></div>
-                <span id="statusText">غير متصل</span>
-            </div>
-            
-            <div class="invite-section" id="inviteSection">
-                <p>ادعُ صديقك بمشاركة هذا الرابط:</p>
-                <div class="invite-link">
-                    <input type="text" id="inviteInput" readonly>
-                    <button class="btn" id="copyBtn">نسخ</button>
-                </div>
-            </div>
-        </div>
+  <div class="container">
+    <div class="header">
+      <h1>لعبة إكس-أو مع مقدمة فيديو</h1>
+      <p class="subtitle">شاهد المقدمة ثم ابدأ اللعب!</p>
     </div>
 
-    <script>
-        // عناصر DOM
-        const gameSetup = document.getElementById('gameSetup');
-        const connectionPanel = document.getElementById('connectionPanel');
-        const gameArea = document.getElementById('gameArea');
-        const localBtn = document.getElementById('localBtn');
-        const onlineBtn = document.getElementById('onlineBtn');
-        const connectBtn = document.getElementById('connectBtn');
-        const createRoomBtn = document.getElementById('createRoomBtn');
-        const simulateBtn = document.getElementById('simulateBtn');
-        const playerNameInput = document.getElementById('playerName');
-        const roomIdInput = document.getElementById('roomId');
-        const customServerInput = document.getElementById('customServer');
-        const nameError = document.getElementById('nameError');
-        const serverError = document.getElementById('serverError');
-        const roomError = document.getElementById('roomError');
-        const playerXName = document.getElementById('playerXName');
-        const playerOName = document.getElementById('playerOName');
-        const board = document.getElementById('board');
-        const cells = Array.from(document.querySelectorAll('.cell'));
-        const playerX = document.getElementById('playerX');
-        const playerO = document.getElementById('playerO');
-        const overlay = document.getElementById('overlay');
-        const messageText = document.getElementById('messageText');
-        const resetBtn = document.getElementById('resetBtn');
-        const newGameBtn = document.getElementById('newGameBtn');
-        const disconnectBtn = document.getElementById('disconnectBtn');
-        const connectionStatus = document.getElementById('connectionStatus');
-        const statusDot = document.getElementById('statusDot');
-        const statusText = document.getElementById('statusText');
-        const inviteSection = document.getElementById('inviteSection');
-        const inviteInput = document.getElementById('inviteInput');
-        const copyBtn = document.getElementById('copyBtn');
-        const serverOptions = document.querySelectorAll('input[name="server"]');
+    <!-- مقدمة فيديو YouTube -->
+    <div class="video-container">
+      <iframe width="100%" height="315" src="https://www.youtube.com/embed/pACEC4R-MYc?autoplay=1&controls=1&modestbranding=1&rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
 
-        // حالة اللعبة
-        let boardState = Array(9).fill(null);
-        let currentPlayer = 'X';
-        let gameMode = 'local';
-        let gameActive = true;
-        let playerRole = 'X';
-        let roomId = null;
-        let socket = null;
-        let isConnected = false;
-        let reconnectAttempts = 0;
-        const maxReconnectAttempts = 5;
-        let playerName = "لاعب";
-        let useSimulation = false;
+    <!-- اللعبة -->
+    <div class="game-area">
+      <div class="board" id="board">
+        <div class="cell" data-index="0"></div>
+        <div class="cell" data-index="1"></div>
+        <div class="cell" data-index="2"></div>
+        <div class="cell" data-index="3"></div>
+        <div class="cell" data-index="4"></div>
+        <div class="cell" data-index="5"></div>
+        <div class="cell" data-index="6"></div>
+        <div class="cell" data-index="7"></div>
+        <div class="cell" data-index="8"></div>
 
-        const wins = [
-            [0,1,2],[3,4,5],[6,7,8],
-            [0,3,6],[1,4,7],[2,5,8],
-            [0,4,8],[2,4,6]
-        ];
+        <div class="overlay" id="overlay">
+          <div class="message" id="message">
+            <p id="messageText">من فضلك العب...</p>
+            <button class="again btn" id="resetBtn">ابدأ من جديد</button>
+          </div>
+        </div>
+      </div>
 
-        // تهيئة الصفحة
-        function init() {
-            // إضافة مستمعي الأحداث
-            localBtn.addEventListener('click', () => startGame('local'));
-            onlineBtn.addEventListener('click', showConnectionPanel);
-            connectBtn.addEventListener('click', connectToRoom);
-            createRoomBtn.addEventListener('click', createNewRoom);
-            simulateBtn.addEventListener('click', simulateConnection);
-            resetBtn.addEventListener('click', resetGame);
-            newGameBtn.addEventListener('click', resetGame);
-            disconnectBtn.addEventListener('click', disconnect);
-            copyBtn.addEventListener('click', copyInviteLink);
-            
-            // مستمعي أحداث الخيارات
-            serverOptions.forEach(option => {
-                option.addEventListener('change', handleServerChange);
-            });
-            
-            // مستمعي أحداث الخلايا
-            cells.forEach((cell, index) => {
-                cell.addEventListener('click', () => handleCellClick(index));
-            });
+      <div class="controls">
+        <div class="status">دور: <strong id="turn">X</strong></div>
+        <div>
+          <button class="btn" id="undoBtn">تراجع</button>
+          <button class="btn" id="resetBtn2">إعادة</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-            // محاولة الاتصال التلقائي إذا كان هناك معرف غرفة في URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const roomParam = urlParams.get('room');
-            if (roomParam) {
-                roomIdInput.value = roomParam;
-                showConnectionPanel();
-            }
+  <script>
+    const cells = Array.from(document.querySelectorAll('.cell'));
+    const statusTurn = document.getElementById('turn');
+    const overlay = document.getElementById('overlay');
+    const messageText = document.getElementById('messageText');
+    const resetBtn = document.getElementById('resetBtn');
+    const resetBtn2 = document.getElementById('resetBtn2');
+    const undoBtn = document.getElementById('undoBtn');
+
+    let board = Array(9).fill(null);
+    let current = 'X';
+    let history = [];
+    let finished = false;
+
+    const wins = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+
+    function render() {
+      cells.forEach((cell, i) => {
+        cell.textContent = board[i] || '';
+        cell.classList.toggle('disabled', finished || !!board[i]);
+        
+        // إضافة فئة للخلايا بناءً على المحتوى
+        if (board[i] === 'X') {
+          cell.classList.add('x');
+          cell.classList.remove('o');
+        } else if (board[i] === 'O') {
+          cell.classList.add('o');
+          cell.classList.remove('x');
+        } else {
+          cell.classList.remove('x', 'o');
         }
+      });
+      
+      statusTurn.textContent = current;
+      statusTurn.style.color = current === 'X' ? '#ef4444' : '#60a5fa';
+    }
 
-        // التعامل مع تغيير خيارات الخادم
-        function handleServerChange() {
-            const selectedOption = document.querySelector('input[name="server"]:checked');
-            if (selectedOption.value === 'custom') {
-                customServerInput.style.display = 'block';
-            } else {
-                customServerInput.style.display = 'none';
-            }
+    function checkWinner() {
+      for (const [a, b, c] of wins) {
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+          return { winner: board[a], line: [a, b, c] };
         }
+      }
+      if (board.every(v => v)) return { winner: null };
+      return null;
+    }
 
-        // عرض لوحة الاتصال
-        function showConnectionPanel() {
-            gameSetup.style.display = 'none';
-            connectionPanel.style.display = 'block';
+    function showOverlay(text) {
+      messageText.textContent = text;
+      overlay.classList.add('show');
+    }
+
+    function hideOverlay() {
+      overlay.classList.remove('show');
+    }
+
+    function highlightWin(line) {
+      // إضافة فئة win للخلايا الفائزة
+      line.forEach(i => {
+        cells[i].classList.add('win');
+      });
+      
+      // رسم خط عبر الخلايا الفائزة
+      drawWinLine(line);
+    }
+
+    function drawWinLine(line) {
+      // إزالة أي خط فوز سابق
+      const existingLine = document.querySelector('.win-line');
+      if (existingLine) {
+        existingLine.remove();
+      }
+      
+      const [a, b, c] = line;
+      const boardRect = document.getElementById('board').getBoundingClientRect();
+      const cellSize = boardRect.width / 3;
+      
+      // حساب إحداثيات الخلايا
+      const getCellCenter = (index) => {
+        const row = Math.floor(index / 3);
+        const col = index % 3;
+        return {
+          x: col * cellSize + cellSize / 2,
+          y: row * cellSize + cellSize / 2
+        };
+      };
+      
+      const start = getCellCenter(a);
+      const end = getCellCenter(c);
+      
+      // حساب طول وزاوية الخط
+      const length = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2));
+      const angle = Math.atan2(end.y - start.y, end.x - start.x) * 180 / Math.PI;
+      
+      // إنشاء عنصر الخط
+      const lineElement = document.createElement('div');
+      lineElement.className = 'win-line';
+      lineElement.style.width = `${length}px`;
+      lineElement.style.height = '6px';
+      lineElement.style.position = 'absolute';
+      lineElement.style.left = `${start.x}px`;
+      lineElement.style.top = `${start.y}px`;
+      lineElement.style.transform = `rotate(${angle}deg)`;
+      lineElement.style.transformOrigin = '0 0';
+      lineElement.style.borderRadius = '3px';
+      
+      document.getElementById('board').appendChild(lineElement);
+    }
+
+    function clearHighlights() {
+      cells.forEach(c => {
+        c.classList.remove('win');
+      });
+      
+      const existingLine = document.querySelector('.win-line');
+      if (existingLine) {
+        existingLine.remove();
+      }
+    }
+
+    function makeMove(index) {
+      if (finished || board[index]) return;
+      
+      board[index] = current;
+      history.push(index);
+      
+      const res = checkWinner();
+      if (res) {
+        finished = true;
+        if (res.winner) {
+          showOverlay(`فاز اللاعب ${res.winner} 🎉`);
+          highlightWin(res.line);
+        } else {
+          showOverlay('تعادل!');
         }
+      } else {
+        current = current === 'X' ? 'O' : 'X';
+      }
+      render();
+    }
 
-        // التحقق من صحة المدخلات
-        function validateInputs() {
-            let isValid = true;
-            
-            // التحقق من اسم اللاعب
-            playerName = playerNameInput.value.trim();
-            if (!playerName) {
-                showError(nameError, 'يرجى إدخال اسم اللاعب');
-                isValid = false;
-            } else {
-                hideError(nameError);
-            }
-            
-            // التحقق من معرف الغرفة
-            roomId = roomIdInput.value.trim();
-            if (!roomId) {
-                showError(roomError, 'يرجى إدخال معرف الغرفة');
-                isValid = false;
-            } else {
-                hideError(roomError);
-            }
-            
-            return isValid;
-        }
+    function reset() {
+      board = Array(9).fill(null);
+      current = 'X';
+      history = [];
+      finished = false;
+      clearHighlights();
+      hideOverlay();
+      render();
+    }
 
-        // عرض رسالة خطأ
-        function showError(element, message) {
-            element.text极速Content = message;
-            element.style.display = 'block';
-        }
+    function undo() {
+      if (history.length === 0 || finished) return;
+      const last = history.pop();
+      board[last] = null;
+      current = current === 'X' ? 'O' : 'X';
+      render();
+    }
 
-        // إخفاء رسالة خطأ
-        function hideError(element) {
-            element.style.display = 'none';
-        }
+    // إضافة مستمعي الأحداث
+    cells.forEach((cell, i) => {
+      cell.addEventListener('click', () => makeMove(i));
+    });
+    
+    resetBtn.addEventListener('click', reset);
+    resetBtn2.addEventListener('click', reset);
+    undoBtn.addEventListener('click', undo);
+    
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) hideOverlay();
+    });
 
-        // إنشاء غرفة جديدة
-        function createNewRoom() {
-            roomId = generateRoomId();
-            roomIdInput.value = roomId;
-            
-            if (validateInputs()) {
-                connectToRoom();
-            }
-        }
-
-        // محاكاة الاتصال (بدون WebSocket حقيقي)
-        function simulateConnection() {
-            if (!validateInputs()) {
-                return;
-            }
-            
-            useSimulation = true;
-            roomId = roomIdInput.value;
-            
-            // تغيير نص زر الاتصال لإظهار التحميل
-            simulateBtn.innerHTML = '<span class="loading"></span> جاري المحاكاة...';
-            simulateBtn.disabled = true;
-            
-            // محاكاة الاتصال
-            setTimeout(() => {
-                isConnected = true;
-                roomId = roomIdInput.value;
-                reconnectAttempts = 0;
-                statusText.textContent = "متصل (محاكاة) - في انتظار الخصم";
-                statusDot.className = "status-dot connected";
-                
-                // إعادة تعيين زر المحاكاة
-                simulateBtn.innerHTML = 'محاكاة اتصال (بدون WebSocket)';
-                simulateBtn.disabled = false;
-                
-                // الانتقال إلى منطقة اللعبة
-                connectionPanel.style.display = 'none';
-                gameArea.style.display = 'flex';
-                
-                // تحديث اسم اللاعب
-                playerXName.textContent = playerName;
-                
-                // إنشاء رابط الدعوة
-                inviteInput.value = `${window.location.origin}${window.location.pathname}?room=${roomId}`;
-                
-                showMessage("تم إنشاء اتصال محاكاة. شارك الرابط مع صديقك!");
-            }, 1500);
-        }
-
-        // الاتصال بغرفة
-        function connectToRoom() {
-            if (!validateInputs()) {
-                return;
-            }
-            
-            useSimulation = false;
-            const selectedOption = document.querySelector('input[name="server"]:checked');
-            let serverUrl = selectedOption.value;
-            
-            if (serverUrl === 'custom') {
-                serverUrl = customServerInput.value.trim();
-                if (!serverUrl) {
-                    showError(serverError, 'يرجى إدخال رابط الخادم');
-                    return;
-                }
-            }
-            
-            // التحقق من رابط الخادم
-            if (!serverUrl.startsWith('ws://') && !serverUrl.startsWith('wss://')) {
-                showError(serverError, 'رابط الخادم يجب أن يبدأ بـ ws:// أو wss://');
-                return;
-            }
-            
-            // تغيير نص زر الاتصال لإظهار التحميل
-            connectBtn.innerHTML = '<span class="loading"></span> جاري الاتصال...';
-            connectBtn.disabled = true;
-            
-            // الاتصال بخادم WebSocket
-            connectWebSocket(serverUrl, roomId);
-        }
-
-        // الاتصال بخادم WebSocket
-        function connectWebSocket(serverUrl, room) {
-            statusText.textContent = "جاري الاتصال بالخادم...";
-            statusDot.className = "status-dot connecting";
-            
-            try {
-                socket = new WebSocket(serverUrl);
-                
-                socket.onopen = function() {
-                    isConnected = true;
-                    roomId = room;
-                    reconnectAttempts = 0;
-                    statusText.textContent = "متصل - في انتظار الخصم";
-                    statusDot.className = "status-dot connected";
-                    
-                    // إعادة تعيين زر الاتصال
-                    connectBtn.innerHTML = 'اتصال';
-                    connectBtn.disabled = false;
-                    
-                    // الانتقال إلى منطقة اللعبة
-                    connectionPanel.style.display = 'none';
-                    gameArea.style.display = 'flex';
-                    
-                    // تحديث اسم اللاعب
-                    playerXName.textContent = playerName;
-                    
-                    // إنشاء رابط الدعوة
-                    inviteInput.value = `${window.location.origin}${window.location.pathname}?room=${roomId}`;
-                    
-                    // إرسال رسالة انضمام إلى الغرفة
-                    sendWebSocketMessage({
-                        type: 'join',
-                        room: roomId,
-                        player: playerRole,
-                        playerName: playerName
-                    });
-                };
-                
-                socket.onmessage = function(event) {
-                    try {
-                        const message = JSON.parse(event.data);
-                        handleWebSocketMessage(message);
-                    } catch (error) {
-                        console.error('خطأ في معالجة الرسالة:', error);
-                        showMessage("خطأ في استقبال البيانات من الخادم");
-                    }
-                };
-                
-                socket.onclose = function(event) {
-                    isConnected = false;
-                    statusText.textContent = "تم قطع الاتصال";
-                    statusDot.className = "status-dot";
-                    
-                    // إعادة تعيين زر الاتصال
-                    connectBtn.innerHTML = 'اتصال';
-                    connectBtn.disabled = false;
-                    
-                    // محاولة إعادة الاتصال فقط إذا لم يكن الإغلاق متعمداً
-                    if (event.code !== 1000 && reconnectAttempts < maxReconnectAttempts) {
-                        reconnectAttempts++;
-                        setTimeout(() => {
-                            statusText.textContent = `إعادة الاتصال... (${reconnectAttempts}/${maxReconnectAttempts})`;
-                            connectWebSocket(serverUrl, roomId);
-                        }, 2000);
-                    }
-                };
-                
-                socket.onerror = function(error) {
-                    console.error('خطأ في WebSocket:', error);
-                    statusText.textContent = "خطأ في الاتصال";
-                    statusDot.className = "status-dot";
-                    
-                    // إعادة تعيين زر الاتصال
-                    connectBtn.innerHTML = 'اتصال';
-                    connectBtn.disabled = false;
-                    
-                    showMessage("حدث خطأ في الاتصال بالخادم. يرجى المحاولة مرة أخرى أو استخدام خيار المحاكاة.");
-                };
-                
-            } catch (error) {
-                console.error('خطأ في إنشاء اتصال WebSocket:', error);
-                statusText.textContent = "خطأ في الاتصال";
-                statusDot.className = "status-dot";
-                
-                // إعادة تعيين زر الاتصال
-                connectBtn.innerHTML = 'اتصال';
-                connectBtn.disabled = false;
-                
-                showMessage("خطأ في الاتصال بالخادم. يرجى التحقق من الرابط والمحاولة مرة أخرى.");
-            }
-        }
-
-        // إرسال رسالة عبر WebSocket
-        function sendWebSocketMessage(message) {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify(message));
-            }
-        }
-
-        // معالجة الرسائل الواردة عبر WebSocket
-        function handleWebSocketMessage(message) {
-            console.log('رسالة مستلمة:', message);
-            
-            switch (message.type) {
-                case 'join':
-                    handlePlayerJoin(message);
-                    break;
-                case 'move':
-                    handleRemoteMove(message);
-                    break;
-                case 'game_reset':
-                    handleGameReset();
-                    break;
-                case 'game_end':
-                    handleRemoteGameEnd(message);
-                    break;
-                case 'error':
-                    handleErrorMessage(message);
-                    break;
-                case 'chat':
-                    handleChatMessage(message);
-                    break;
-            }
-        }
-
-        // التعامل مع انضمام لاعب جديد
-        function handlePlayerJoin(message) {
-            if (message.player !== playerRole) {
-                statusText.textContent = "متصل - الخصم متصل";
-                playerOName.textContent = message.playerName || "الخصم";
-                
-                if (playerRole === 'X') {
-                    playerX.classList.add('active');
-                    playerO.classList.remove('active');
-                } else {
-                    playerX.classList.remove('active');
-                    playerO.classList.add('active');
-                }
-                
-                showMessage(`انضم ${message.playerName} إلى الغرفة!`);
-            }
-        }
-
-        // التعامل مع رسائل الخطأ
-        function handleErrorMessage(message) {
-            showMessage(`خطأ: ${message.message}`);
-        }
-
-        // إنشاء معرف غرفة عشوائي
-        function generateRoomId() {
-            return Math.random().toString(36).substring(2, 8).toUpperCase();
-        }
-
-        // قطع الاتصال
-        function disconnect() {
-            if (socket) {
-                socket.close(1000, "تم قطع الاتصال بواسطة المستخدم");
-            }
-            isConnected = false;
-            statusText.textContent = "غير متصل";
-            statusDot.className = "status-dot";
-            
-            // العودة إلى شاشة البداية
-            gameArea.style.display = 'none';
-            gameSetup.style.display = 'block';
-        }
-
-        // نسخ رابط الدعوة
-        function copyInviteLink() {
-            inviteInput.select();
-            document.execCommand('copy');
-            copyBtn.textContent = 'تم النسخ!';
-            setTimeout(() => {
-                copyBtn.textContent = 'نسخ';
-            }, 2000);
-        }
-
-        // بدء اللعبة
-        function startGame(mode) {
-            gameMode = mode;
-            gameSetup.style.display = 'none';
-            gameArea.style.display = 'flex';
-            
-            if (mode === 'online') {
-                showConnectionPanel();
-            } else {
-                statusText.textContent = "لعبة محلية";
-                statusDot.className = "status-dot connected";
-                inviteSection.style.display = 'none';
-                playerXName.textContent = playerNameInput.value || "لاعب 1";
-                playerOName.textContent = "لاعب 2";
-            }
-            
-            resetGame();
-        }
-
-        // التعامل مع النقر على خلية
-        function handleCellClick(index) {
-            if (!gameActive || boardState[index] !== null) return;
-            
-            // في اللعبة عبر الإنترنت، تأكد أن هذا هو دور اللاعب
-            if (gameMode === 'online' && (
-                (playerRole === 'X' && currentPlayer !== 'X') ||
-                (playerRole === 'O' && currentPlayer !== 'O')
-            )) {
-                showMessage("ليس دورك للعب الآن!");
-                return;
-            }
-            
-            // تحديث حالة اللوحة
-            boardState[index] = currentPlayer;
-            updateBoard();
-            
-            // إرسال الحركة إلى الخصم (في حالة اللعب عبر الإنترنت)
-            if (gameMode === 'online' && isConnected && !useSimulation) {
-                sendWebSocketMessage({
-                    type: 'move',
-                    index: index,
-                    player: currentPlayer,
-                    room: roomId
-                });
-            }
-            
-            // التحقق من وجود فائز
-            const result = checkWinner();
-            if (result) {
-                handleGame极速End(result);
-                return;
-            }
-            
-            // التحقق من التعادل
-            if (boardState.every(cell => cell !== null)) {
-                handleGameEnd({ winner: null });
-                return;
-            }
-            
-            // تبديل اللاعب
-            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-            updatePlayerTurn();
-        }
-
-        // التعامل مع حركة الخصم
-        function handleRemoteMove(message) {
-            if (message.player === playerRole) return; // تجاهل الحركات الخاصة باللاعب الحالي
-            
-            boardState[message.index] = message.player;
-            updateBoard();
-            
-            // التحقق من وجود فائز
-            const result = checkWinner();
-            if (result) {
-                handleGameEnd(result);
-                return;
-            }
-            
-            // التحقق من التعادل
-            if (boardState.every(cell => cell !== null)) {
-                handleGameEnd({ winner: null });
-                return;
-            }
-            
-            // تبديل اللاعب
-            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-            updatePlayerTurn();
-        }
-
-        // التعامل مع إعادة تعيين اللعبة من الخصم
-        function handleGameReset() {
-            resetGame();
-            showMessage("الخصم أعاد اللعبة!");
-        }
-
-        // التعامل مع نهاية اللعبة من الخصم
-        function handleRemoteGameEnd(message) {
-            const result = checkWinner();
-            if (result) {
-                handleGameEnd(result);
-            }
-        }
-
-        // التعامل مع رسائل الدردشة
-        function handleChatMessage(message) {
-            // يمكن إضافة نظام دردشة هنا
-            console.log('رسالة دردشة:', message.text);
-        }
-
-        // التحقق من وجود فائز
-        function checkWinner() {
-            for (const [a, b, c] of wins) {
-                if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
-                    return { winner: boardState[a], line: [a, b, c] };
-                }
-            }
-            return null;
-        }
-
-        // التعامل مع نهاية اللعبة
-        function handleGameEnd(result) {
-            gameActive = false;
-            
-            if (result.winner) {
-                messageText.textContent = `فاز اللاعب ${result.winner}!`;
-                highlightWinningCells(result.line);
-            } else {
-                messageText.textContent = 'تعادل!';
-            }
-            
-            overlay.classList.add('show');
-            
-            // إرسال نتيجة اللعبة إلى الخصم
-            if (gameMode === 'online' && isConnected && !useSimulation) {
-                sendWebSocketMessage({
-                    type: 'game_end',
-                    winner: result.winner,
-                    room: roomId
-                });
-            }
-        }
-
-        // تمييز الخلايا الفائزة
-        function highlightWinningCells(line) {
-            line.forEach(index => {
-                cells[index].classList.add('win');
-            });
-        }
-
-        // عرض رسالة
-        function showMessage(msg) {
-            messageText.textContent = msg;
-            overlay.classList.add('show');
-            
-            setTimeout(() => {
-                overlay.classList.remove('show');
-            }, 3000);
-        }
-
-        // تحديث اللوحة
-        function updateBoard() {
-            cells.forEach((cell, index) => {
-                cell.textContent = boardState[index] || '';
-                if (boardState[index] === 'X') {
-                    cell.classList.add('x');
-                    cell.classList.remove('o');
-                } else if (boardState[index] === 'O') {
-                    cell.classList.add('o');
-                    cell.classList.remove('x');
-                } else {
-                    cell.classList.remove('x', 'o');
-                }
-            });
-        }
-
-        // تحديث دور اللاعب
-        function updatePlayerTurn() {
-            if (currentPlayer === 'X') {
-                playerX.classList.add('active');
-                playerO.classList.remove('active');
-            } else {
-                playerX.classList.remove('active');
-                playerO.classList.add('active');
-            }
-        }
-
-        // إعادة تعيين اللعبة
-        function resetGame() {
-            boardState = Array(9).fill(null);
-            currentPlayer = 'X';
-            gameActive = true;
-            
-            cells.forEach(cell => {
-                cell.classList.remove('win');
-            });
-            
-            updateBoard();
-            updatePlayerTurn();
-            overlay.classList.remove('show');
-            
-            // في اللعبة عبر الإنترنت، تأكد من أن اللاعب X يبدأ دائمًا
-            if (gameMode === 'online') {
-                playerRole = 'X';
-                playerXName.textContent = playerName;
-                playerOName.textContent = "في انتظار الخصم";
-                
-                if (playerRole === 'X') {
-                    playerX.classList.add('active');
-                    playerO.classList.remove('active');
-                }
-                
-                // إرسال طلب إعادة تعيين إلى الخصم
-                if (isConnected && !useSimulation) {
-                    sendWebSocketMessage({
-                        type: 'game_reset',
-                        room: roomId
-                    });
-                }
-            }
-        }
-
-        // تهيئة اللعبة عند تحميل الصفحة
-        window.addEventListener('load', init);
-    </script>
+    // التهيئة الأولية
+    render();
+  </script>
 </body>
 </html>
